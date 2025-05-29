@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍔 FoodMaster - 外卖APP原型</title>
+    <style>
+        :root {
+            --primary-color: #FF6B35;
+            --secondary-color: #F7931E;
+            --success-color: #27AE60;
+            --bg-color: #F8F9FA;
+            --text-dark: #2C3E50;
+            --text-light: #7F8C8D;
+            --white: #FFFFFF;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+            --radius: 12px;
+            --radius-lg: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .phone-container {
+            position: relative;
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 40px;
+            padding: 8px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .status-bar {
+            height: 44px;
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 16px 20px;
+            position: relative;
+        }
+
+        .location {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .location-icon {
+            margin-right: 8px;
+        }
+
+        .search-bar {
+            background: rgba(255,255,255,0.2);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            border: none;
+            color: var(--white);
+            backdrop-filter: blur(10px);
+            width: 100%;
+        }
+
+        .search-bar::placeholder {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .content {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+
+        .page.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .home-page {
+            padding: 20px;
+        }
+
+        .banner {
+            height: 140px;
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            border-radius: var(--radius-lg);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 18px;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(30deg); }
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .category-item {
+            text-align: center;
+            padding: 16px 8px;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+
+        .category-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .category-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .restaurant-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .restaurant-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .restaurant-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .restaurant-image {
+            height: 120px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 20px;
+        }
+
+        .restaurant-info {
+            padding: 16px;
+        }
+
+        .restaurant-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-dark);
+        }
+
+        .restaurant-desc {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .restaurant-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .rating {
+            background: var(--success-color);
+            color: var(--white);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .tab-bar {
+            height: 80px;
+            background: var(--white);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #E5E5E5;
+            padding-bottom: 20px;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-light);
+        }
+
+        .tab-item.active {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .tab-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .tab-label {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .cart-page {
+            padding: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .item-image {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-color);
+            border-radius: var(--radius);
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 18px;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-dark);
+        }
+
+        .item-price {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quantity-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--primary-color);
+            color: var(--white);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .quantity-btn:hover {
+            background: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        .quantity {
+            font-weight: 600;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .checkout-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            border: none;
+            padding: 16px;
+            border-radius: var(--radius);
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .checkout-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .checkout-btn:hover::before {
+            left: 100%;
+        }
+
+        .profile-page {
+            padding: 20px;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 32px;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .profile-email {
+            color: var(--text-light);
+        }
+
+        .menu-list {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+        }
+
+        .menu-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid #F0F0F0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .menu-item:hover {
+            background: var(--bg-color);
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-icon {
+            margin-right: 12px;
+            font-size: 20px;
+            color: var(--primary-color);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--primary-color);
+            color: var(--white);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .categories-page {
+            display: flex;
+            height: 100%;
+        }
+
+        .category-sidebar {
+            width: 100px;
+            background: var(--white);
+            border-right: 1px solid #F0F0F0;
+            overflow-y: auto;
+        }
+
+        .category-nav-item {
+            padding: 16px 8px;
+            text-align: center;
+            font-size: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #F0F0F0;
+            transition: all 0.2s;
+        }
+
+        .category-nav-item.active {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .products-grid {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            align-content: start;
+        }
+
+        .product-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .product-image {
+            height: 80px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 16px;
+        }
+
+        .product-info {
+            padding: 12px;
+        }
+
+        .product-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-dark);
+        }
+
+        .product-price {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .add-btn {
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            float: right;
+            margin-top: -8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .add-btn:hover {
+            transform: scale(1.1);
+            background: var(--secondary-color);
+        }
+
+        .floating-cart {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            border: none;
+            color: var(--white);
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .floating-cart:hover {
+            transform: scale(1.1);
+            background: var(--secondary-color);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-dark);
+        }
+
+        .total-price {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-align: center;
+            margin: 16px 0;
+        }
+
+        @media (max-width: 480px) {
+            .phone-container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                padding: 0;
+            }
+            
+            .phone-screen {
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="notch"></div>
+        <div class="phone-screen">
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 📶 📶 🔋</span>
+            </div>
+
+            <!-- App Header -->
+            <div class="app-header">
+                <div class="location">
+                    <span class="location-icon">📍</span>
+                    <div>
+                        <div style="font-weight: 600;">北京市朝阳区</div>
+                        <div style="font-size: 12px; opacity: 0.8;">三里屯SOHO</div>
+                    </div>
+                </div>
+                <input type="text" class="search-bar" placeholder="搜索美食、餐厅">
+            </div>
+
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Home Page -->
+                <div class="page home-page active" id="home">
+                    <div class="banner">
+                        <div>🎉 新用户专享 - 满减优惠券</div>
+                    </div>
+
+                    <div class="categories">
+                        <div class="category-item">
+                            <span class="category-icon">🍜</span>
+                            <div>中餐</div>
+                        </div>
+                        <div class="category-item">
+                            <span class="category-icon">🍕</span>
+                            <div>西餐</div>
+                        </div>
+                        <div class="category-item">
+                            <span class="category-icon">🍣</span>
+                            <div>日料</div>
+                        </div>
+                        <div class="category-item">
+                            <span class="category-icon">☕</span>
+                            <div>饮品</div>
+                        </div>
+                    </div>
+
+                    <h3 class="section-title">推荐餐厅</h3>
+                    <div class="restaurant-list">
+                        <div class="restaurant-card">
+                            <div class="restaurant-image">🏪 张妈妈川菜</div>
+                            <div class="restaurant-info">
+                                <div class="restaurant-name">张妈妈川菜馆</div>
+                                <div class="restaurant-desc">正宗川菜，麻辣鲜香</div>
+                                <div class="restaurant-meta">
+                                    <span class="rating">4.8⭐</span>
+                                    <span>月售2000+</span>
+                                    <span>30分钟</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="restaurant-card">
+                            <div class="restaurant-image">🍔 汉堡王</div>
+                            <div class="restaurant-info">
+                                <div class="restaurant-name">汉堡王</div>
+                                <div class="restaurant-desc">经典美式快餐</div>
+                                <div class="restaurant-meta">
+                                    <span class="rating">4.6⭐</span>
+                                    <span>月售1500+</span>
+                                    <span>25分钟</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="restaurant-card">
+                            <div class="restaurant-image">🍱 日式便当</div>
+                            <div class="restaurant-info">
+                                <div class="restaurant-name">和风便当</div>
+                                <div class="restaurant-desc">新鲜日式料理</div>
+                                <div class="restaurant-meta">
+                                    <span class="rating">4.9⭐</span>
+                                    <span>月售800+</span>
+                                    <span>35分钟</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categories Page -->
+                <div class="page categories-page" id="categories">
+                    <div class="category-sidebar">
+                        <div class="category-nav-item active" data-category="hot">热销</div>
+                        <div class="category-nav-item" data-category="main">主食</div>
+                        <div class="category-nav-item" data-category="drink">饮品</div>
+                        <div class="category-nav-item" data-category="dessert">甜品</div>
+                        <div class="category-nav-item" data-category="side">小食</div>
+                    </div>
+                    <div class="products-grid" id="productsGrid">
+                        <!-- Products will be dynamically loaded here -->
+                    </div>
+                </div>
+
+                <!-- Cart Page -->
+                <div class="page cart-page" id="cart">
+                    <h3 class="section-title">购物车</h3>
+                    <div id="cartItems">
+                        <!-- Cart items will be dynamically loaded here -->
+                    </div>
+                    <div class="total-price" id="totalPrice">总计: ¥0</div>
+                    <button class="checkout-btn" onclick="checkout()">去结算</button>
+                </div>
+
+                <!-- Profile Page -->
+                <div class="page profile-page" id="profile">
+                    <div class="profile-header">
+                        <div class="avatar">👤</div>
+                        <div class="profile-name">美食达人</div>
+                        <div class="profile-email">foodlover@example.com</div>
+                    </div>
+
+                    <div class="menu-list">
+                        <div class="menu-item">
+                            <div class="menu-left">
+                                <span class="menu-icon">📋</span>
+                                <span>我的订单</span>
+                            </div>
+                            <span>></span>
+                        </div>
+                        <div class="menu-item">
+                            <div class="menu-left">
+                                <span class="menu-icon">💰</span>
+                                <span>优惠券</span>
+                            </div>
+                            <span>></span>
+                        </div>
+                        <div class="menu-item">
+                            <div class="menu-left">
+                                <span class="menu-icon">📍</span>
+                                <span>收货地址</span>
+                            </div>
+                            <span>></span>
+                        </div>
+                        <div class="menu-item">
+                            <div class="menu-left">
+                                <span class="menu-icon">⚙️</span>
+                                <span>设置</span>
+                            </div>
+                            <span>></span>
+                        </div>
+                        <div class="menu-item">
+                            <div class="menu-left">
+                                <span class="menu-icon">❓</span>
+                                <span>帮助中心</span>
+                            </div>
+                            <span>></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Bar -->
+            <div class="tab-bar">
+                <div class="tab-item active" data-page="home">
+                    <div class="tab-icon">🏠</div>
+                    <div class="tab-label">首页</div>
+                </div>
+                <div class="tab-item" data-page="categories">
+                    <div class="tab-icon">📋</div>
+                    <div class="tab-label">分类</div>
+                </div>
+                <div class="tab-item" data-page="cart" style="position: relative;">
+                    <div class="tab-icon">🛒</div>
+                    <div class="tab-label">购物车</div>
+                    <div class="cart-badge" id="cartBadge">0</div>
+                </div>
+                <div class="tab-item" data-page="profile">
+                    <div class="tab-icon">👤</div>
+                    <div class="tab-label">我的</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // App Data
+        const products = {
+            hot: [
+                { id: 1, name: '宫保鸡丁', price: 28, icon: '🍗' },
+                { id: 2, name: '麻婆豆腐', price: 22, icon: '🥘' },
+                { id: 3, name: '回锅肉', price: 32, icon: '🥓' },
+                { id: 4, name: '水煮鱼', price: 48, icon: '🐟' }
+            ],
+            main: [
+                { id: 5, name: '扬州炒饭', price: 25, icon: '🍚' },
+                { id: 6, name: '牛肉面', price: 30, icon: '🍜' },
+                { id: 7, name: '汉堡套餐', price: 35, icon: '🍔' },
+                { id: 8, name: '披萨', price: 45, icon: '🍕' }
+            ],
+            drink: [
+                { id: 9, name: '珍珠奶茶', price: 15, icon: '🧋' },
+                { id: 10, name: '鲜榨橙汁', price: 18, icon: '🥤' },
+                { id: 11, name: '咖啡', price: 25, icon: '☕' },
+                { id: 12, name: '柠檬茶', price: 12, icon: '🍋' }
+            ],
+            dessert: [
+                { id: 13, name: '提拉米苏', price: 28, icon: '🍰' },
+                { id: 14, name: '芝士蛋糕', price: 32, icon: '🧀' },
+                { id: 15, name: '布丁', price: 15, icon: '🍮' },
+                { id: 16, name: '冰淇淋', price: 18, icon: '🍦' }
+            ],
+            side: [
+                { id: 17, name: '薯条', price: 12, icon: '🍟' },
+                { id: 18, name: '鸡翅', price: 20, icon: '🍗' },
+                { id: 19, name: '春卷', price: 16, icon: '🥮' },
+                { id: 20, name: '小笼包', price: 25, icon: '🥟' }
+            ]
+        };
+
+        let cart = {};
+        let currentCategory = 'hot';
+
+        // Tab switching
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetPage = tab.dataset.page;
+                switchPage(targetPage);
+                
+                // Update active tab
+                document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            document.getElementById(pageId).classList.add('active');
+            
+            if (pageId === 'categories') {
+                loadProducts(currentCategory);
+            } else if (pageId === 'cart') {
+                loadCart();
+            }
+        }
+
+        // Category navigation
+        document.querySelectorAll('.category-nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const category = item.dataset.category;
+                currentCategory = category;
+                
+                document.querySelectorAll('.category-nav-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                loadProducts(category);
+            });
+        });
+
+        function loadProducts(category) {
+            const grid = document.getElementById('productsGrid');
+            const productList = products[category] || [];
+            
+            grid.innerHTML = productList.map(product => `
+                <div class="product-card">
+                    <div class="product-image">${product.icon}</div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">¥${product.price}
+                            <button class="add-btn" onclick="addToCart(${product.id}, '${product.name}', ${product.price}, '${product.icon}')">+</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(id, name, price, icon) {
+            if (cart[id]) {
+                cart[id].quantity += 1;
+            } else {
+                cart[id] = { id, name, price, icon, quantity: 1 };
+            }
+            updateCartBadge();
+            
+            // Add animation feedback
+            const button = event.target;
+            button.style.transform = 'scale(1.2)';
+            setTimeout(() => button.style.transform = 'scale(1)', 200);
+        }
+
+        function removeFromCart(id) {
+            if (cart[id]) {
+                cart[id].quantity -= 1;
+                if (cart[id].quantity <= 0) {
+                    delete cart[id];
+                }
+            }
+            updateCartBadge();
+            loadCart();
+        }
+
+        function updateCartBadge() {
+            const totalItems = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
+            const badge = document.getElementById('cartBadge');
+            badge.textContent = totalItems;
+            badge.style.display = totalItems > 0 ? 'flex' : 'none';
+        }
+
+        function loadCart() {
+            const cartContainer = document.getElementById('cartItems');
+            const totalPriceElement = document.getElementById('totalPrice');
+            
+            if (Object.keys(cart).length === 0) {
+                cartContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-light);">
+                        <div style="font-size: 48px; margin-bottom: 16px;">🛒</div>
+                        <div>购物车是空的</div>
+                        <div style="font-size: 14px; margin-top: 8px;">快去添加一些美食吧！</div>
+                    </div>
+                `;
+                totalPriceElement.textContent = '总计: ¥0';
+                return;
+            }
+            
+            const cartItems = Object.values(cart);
+            const totalPrice = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            cartContainer.innerHTML = cartItems.map(item => `
+                <div class="cart-item">
+                    <div class="item-image">${item.icon}</div>
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-price">¥${item.price}</div>
+                    </div>
+                    <div class="quantity-control">
+                        <button class="quantity-btn" onclick="removeFromCart(${item.id})">-</button>
+                        <span class="quantity" id="quantity-${item.id}">${item.quantity}</span>
+                        <button class="quantity-btn" onclick="addToCart(${item.id}, '${item.name}', ${item.price}, '${item.icon}')">+</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            totalPriceElement.textContent = `总计: ¥${totalPrice}`;
+        }
+
+        function checkout() {
+            if (Object.keys(cart).length === 0) {
+                alert('购物车是空的！');
+                return;
+            }
+            
+            // Simulate checkout process
+            const checkoutBtn = document.querySelector('.checkout-btn');
+            checkoutBtn.textContent = '处理中...';
+            checkoutBtn.disabled = true;
+            
+            setTimeout(() => {
+                alert('订单提交成功！🎉');
+                cart = {};
+                updateCartBadge();
+                loadCart();
+                checkoutBtn.textContent = '去结算';
+                checkoutBtn.disabled = false;
+            }, 2000);
+        }
+
+        // Initialize app
+        updateCartBadge();
+        loadProducts('hot');
+
+        // Add some demo items to cart for demonstration
+        setTimeout(() => {
+            addToCart(1, '宫保鸡丁', 28, '🍗');
+            addToCart(9, '珍珠奶茶', 15, '🧋');
+        }, 1000);
+
+        // Add click animations to category items
+        document.querySelectorAll('.category-item').forEach(item => {
+            item.addEventListener('click', () => {
+                item.style.transform = 'scale(0.95)';
+                setTimeout(() => item.style.transform = 'scale(1)', 150);
+            });
+        });
+
+        // Banner auto animation
+        setInterval(() => {
+            const banner = document.querySelector('.banner');
+            banner.style.background = banner.style.background === 'linear-gradient(45deg, rgb(255, 154, 158), rgb(254, 207, 239))' 
+                ? 'linear-gradient(45deg, #667eea, #764ba2)' 
+                : 'linear-gradient(45deg, #ff9a9e, #fecfef)';
+        }, 3000);
+    </script>
+</body>
+</html>
