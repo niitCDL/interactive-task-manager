@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交互式任务管理器</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 主容器 -->
+    <div class="app-container">
+        <!-- 头部 -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1 class="app-title">
+                    <i class="fas fa-tasks"></i>
+                    任务管理器
+                </h1>
+                <button class="btn btn-primary add-task-btn" id="addTaskBtn">
+                    <i class="fas fa-plus"></i>
+                    添加任务
+                </button>
+            </div>
+        </header>
+
+        <!-- 工具栏 -->
+        <div class="toolbar">
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="搜索任务..." class="search-input">
+            </div>
+            <div class="filter-container">
+                <select id="priorityFilter" class="filter-select">
+                    <option value="">所有优先级</option>
+                    <option value="high">高优先级</option>
+                    <option value="medium">中优先级</option>
+                    <option value="low">低优先级</option>
+                </select>
+            </div>
+            <div class="stats">
+                <span class="stat-item">
+                    <i class="fas fa-clock"></i>
+                    待办: <span id="todoCount">0</span>
+                </span>
+                <span class="stat-item">
+                    <i class="fas fa-spinner"></i>
+                    进行中: <span id="inProgressCount">0</span>
+                </span>
+                <span class="stat-item">
+                    <i class="fas fa-check"></i>
+                    已完成: <span id="completedCount">0</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- 任务看板 -->
+        <main class="task-board">
+            <div class="task-column" data-status="todo">
+                <div class="column-header">
+                    <h3><i class="fas fa-clock"></i> 待办事项</h3>
+                    <span class="task-count" id="todoColumnCount">0</span>
+                </div>
+                <div class="task-list" id="todoList" data-status="todo">
+                    <!-- 任务项将在这里动态生成 -->
+                </div>
+            </div>
+
+            <div class="task-column" data-status="in-progress">
+                <div class="column-header">
+                    <h3><i class="fas fa-spinner"></i> 进行中</h3>
+                    <span class="task-count" id="inProgressColumnCount">0</span>
+                </div>
+                <div class="task-list" id="inProgressList" data-status="in-progress">
+                    <!-- 任务项将在这里动态生成 -->
+                </div>
+            </div>
+
+            <div class="task-column" data-status="completed">
+                <div class="column-header">
+                    <h3><i class="fas fa-check"></i> 已完成</h3>
+                    <span class="task-count" id="completedColumnCount">0</span>
+                </div>
+                <div class="task-list" id="completedList" data-status="completed">
+                    <!-- 任务项将在这里动态生成 -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 添加/编辑任务模态框 -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">添加新任务</h3>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="taskForm" class="modal-body">
+                <div class="form-group">
+                    <label for="taskTitle">任务标题 *</label>
+                    <input type="text" id="taskTitle" required placeholder="输入任务标题...">
+                </div>
+                <div class="form-group">
+                    <label for="taskDescription">任务描述</label>
+                    <textarea id="taskDescription" placeholder="输入任务描述..." rows="3"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskPriority">优先级</label>
+                        <select id="taskPriority">
+                            <option value="low">低优先级</option>
+                            <option value="medium" selected>中优先级</option>
+                            <option value="high">高优先级</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDueDate">截止日期</label>
+                        <input type="date" id="taskDueDate">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">取消</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">保存任务</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 确认删除模态框 -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3>确认删除</h3>
+            </div>
+            <div class="modal-body">
+                <p>确定要删除这个任务吗？此操作无法撤销。</p>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">取消</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通知提示 -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">操作成功！</span>
+    </div>
+
+    <script src="scripts/app.js"></script>
+</body>
+</html>
