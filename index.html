@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>交互式任务管理器</title>
+    <title>交互式任务管理器 - 增强版</title>
     <link rel="stylesheet" href="styles/main.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
+    <!-- 粒子庆祝画布 -->
+    <canvas id="celebrationCanvas"></canvas>
+    
     <!-- 主容器 -->
     <div class="app-container">
         <!-- 头部 -->
@@ -16,13 +19,65 @@
                 <h1 class="app-title">
                     <i class="fas fa-tasks"></i>
                     任务管理器
+                    <span class="version-badge">v2.0</span>
                 </h1>
-                <button class="btn btn-primary add-task-btn" id="addTaskBtn">
-                    <i class="fas fa-plus"></i>
-                    添加任务
-                </button>
+                <div class="header-actions">
+                    <button class="btn btn-icon theme-toggle" id="themeToggle" title="切换主题">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="btn btn-icon stats-toggle" id="statsToggle" title="统计面板">
+                        <i class="fas fa-chart-pie"></i>
+                    </button>
+                    <button class="btn btn-primary add-task-btn" id="addTaskBtn">
+                        <i class="fas fa-plus"></i>
+                        添加任务
+                    </button>
+                </div>
             </div>
         </header>
+
+        <!-- 统计面板 -->
+        <div class="stats-panel" id="statsPanel">
+            <div class="stats-content">
+                <div class="stats-chart">
+                    <canvas id="progressChart" width="120" height="120"></canvas>
+                    <div class="chart-center">
+                        <span class="completion-rate" id="completionRate">0%</span>
+                        <span class="chart-label">完成率</span>
+                    </div>
+                </div>
+                <div class="stats-details">
+                    <div class="stat-card">
+                        <i class="fas fa-clock stat-icon"></i>
+                        <div class="stat-info">
+                            <span class="stat-number" id="todoStat">0</span>
+                            <span class="stat-label">待办</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-spinner stat-icon"></i>
+                        <div class="stat-info">
+                            <span class="stat-number" id="inProgressStat">0</span>
+                            <span class="stat-label">进行中</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-check stat-icon"></i>
+                        <div class="stat-info">
+                            <span class="stat-number" id="completedStat">0</span>
+                            <span class="stat-label">已完成</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-trophy stat-icon"></i>
+                        <div class="stat-info">
+                            <span class="stat-number" id="totalStat">0</span>
+                            <span class="stat-label">总计</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- 工具栏 -->
         <div class="toolbar">
@@ -36,6 +91,13 @@
                     <option value="high">高优先级</option>
                     <option value="medium">中优先级</option>
                     <option value="low">低优先级</option>
+                </select>
+                <select id="tagFilter" class="filter-select">
+                    <option value="">所有标签</option>
+                    <option value="work">工作</option>
+                    <option value="study">学习</option>
+                    <option value="life">生活</option>
+                    <option value="urgent">紧急</option>
                 </select>
             </div>
             <div class="stats">
@@ -120,6 +182,26 @@
                         <input type="date" id="taskDueDate">
                     </div>
                 </div>
+                <div class="form-group">
+                    <label for="taskTags">标签</label>
+                    <div class="tag-selector">
+                        <div class="tag-options">
+                            <button type="button" class="tag-option" data-tag="work">
+                                <i class="fas fa-briefcase"></i> 工作
+                            </button>
+                            <button type="button" class="tag-option" data-tag="study">
+                                <i class="fas fa-graduation-cap"></i> 学习
+                            </button>
+                            <button type="button" class="tag-option" data-tag="life">
+                                <i class="fas fa-home"></i> 生活
+                            </button>
+                            <button type="button" class="tag-option" data-tag="urgent">
+                                <i class="fas fa-exclamation"></i> 紧急
+                            </button>
+                        </div>
+                        <div class="selected-tags" id="selectedTags"></div>
+                    </div>
+                </div>
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" id="cancelBtn">取消</button>
                     <button type="submit" class="btn btn-primary" id="saveBtn">保存任务</button>
@@ -148,6 +230,17 @@
     <div class="notification" id="notification">
         <i class="fas fa-check-circle"></i>
         <span id="notificationText">操作成功！</span>
+    </div>
+
+    <!-- 成就提示 -->
+    <div class="achievement" id="achievement">
+        <div class="achievement-content">
+            <i class="fas fa-trophy"></i>
+            <div class="achievement-text">
+                <h4>任务完成！</h4>
+                <p>太棒了！继续保持！</p>
+            </div>
+        </div>
     </div>
 
     <script src="scripts/app.js"></script>
